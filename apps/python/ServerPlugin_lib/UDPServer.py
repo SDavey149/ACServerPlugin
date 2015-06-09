@@ -1,6 +1,7 @@
 import socketserver
 import ac
 import acsys
+from sim_info import info
 
 class Car:
     inst = None
@@ -8,20 +9,18 @@ class Car:
     @staticmethod
     def getInstance():
         """Should use this static method to get a Car object, no need for multiple instances"""
-        if Car.inst is None: Car.inst = Car(1)
+        if Car.inst is None: Car.inst = Car()
         return Car.inst
 
-    def __init__(self, a):
+    def __init__(self):
         pass
 
-    def getCoreTyreTemps(self):
-        return ac.getCarState(0, acsys.CS.CurrentTyresCoreTemp)
-
-    def update(self):
-        coreTemps = ac.getCarState(0, acsys.CS.CurrentTyresCoreTemp)
-
     def marshall(self):
-        return "--car-details--".encode()
+        """Simple comma seperated transmission, client will need to be aware of positions of various data items"""
+        data = []
+        data.extend(ac.getCarState(0, acsys.CS.CurrentTyresCoreTemp)) #0-3 - Core tyre temperatures, Degrees celcius
+        data.extend(info.physics.tyreWear) #4-7 #tyre wear
+        return ",".join(data).encode()
 
 
 class UDPServer(socketserver.BaseRequestHandler):
