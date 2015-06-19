@@ -20,7 +20,7 @@ class Car:
         Add any new data items to the end so existing apps are not affected
         """
         try:
-            data = []
+            data = ["x02"] #start token
             data.extend(ac.getCarState(0, acsys.CS.CurrentTyresCoreTemp)) #0-3 - Core tyre temperatures, Degrees celcius
             data.extend(info.physics.tyreWear) #4-7 #tyre wear
             data.extend(ac.getCarState(0, acsys.CS.DynamicPressure)) #8-11 pressure of each tyre in PSI
@@ -37,6 +37,8 @@ class Car:
             data.append(ac.getCarState(0, acsys.CS.Steer)) #25 steering rotation in radians
             data.append(ac.getCarName(0)) #26 name of car being driven by player
             data.append(ac.getTrackName(0)) #27 track name
+
+            data.append("x04") #end token
         except Exception as e:
             ac.console("{}".format(e))
         return ",".join(str(v) for v in data).encode()
